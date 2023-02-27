@@ -18,38 +18,30 @@ body.appendChild(searchBox);
 body.appendChild(sbButton);
 body.appendChild(screen);
 
-const wmain = {
-  temp: 300.27,
-  feels_like: 302.96,
-  temp_min: 300.13,
-  temp_max: 300.27,
-  pressure: 1018,
-  humidity: 78,
-};
+function kelvinToCelsius(value) {
+  return value - 273.15;
+}
 
-const wWeather = [
-  {
-    id: 801,
-    main: "Clouds",
-    description: "few clouds",
-    icon: "02d",
-  },
-];
+function kelvinToFahrenheit(value) {
+  return kelvinToCelsius(value) * 1.8 + 32;
+}
 
-const wWind = {
-  speed: 3.09,
-  deg: 90,
-};
-
-const weatherCheck = async () => {
-  /* const wsearch = await fetch(
+// Celsius
+const weatherCheckC = async () => {
+  const wsearch = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
   );
   const wsdata = await wsearch.json();
-  console.log(wsdata.main);
-  console.log(wsdata.weather);
-  console.log(wsdata.wind); */
-  screen.innerText = wWind.speed;
+
+  const wmain = wsdata.main;
+  const wWeather = wsdata.weather;
+  const wWind = wsdata.wind;
+
+  const mObject = [wmain, wWeather, wWind];
+
+  screen.innerText = `${Math.round(kelvinToCelsius(mObject[0].temp))}`;
+  console.log(mObject[0].temp);
+  console.log(mObject);
 };
 
-sbButton.addEventListener("click", weatherCheck);
+sbButton.addEventListener("click", weatherCheckC);
