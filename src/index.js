@@ -1,4 +1,5 @@
 import "./styles.css";
+import * as time from "./time";
 
 const body = document.querySelector("body");
 // Form
@@ -28,7 +29,6 @@ function kelvinToFahrenheit(value) {
   return kelvinToCelsius(value) * 1.8 + 32;
 }
 
-// Celsius
 const weatherCheck = async (e) => {
   e.preventDefault();
   const wsearch = await fetch(
@@ -39,17 +39,19 @@ const weatherCheck = async (e) => {
   const cardInfo = {
     city: wsdata.name,
     country: wsdata.sys.country,
-    time: wsdata.dt,
+    time: `${time.time(wsdata.dt)}`,
+    date: `${time.currentDate(wsdata.dt)}`,
     description: wsdata.weather[0].description,
-    temp: wsdata.main.temp,
-    feels_like: wsdata.main.feels_like,
-    temp_min: wsdata.main.temp_min,
-    temp_max: wsdata.main.temp_max,
-    humidity: wsdata.main.humidity,
-    wind: wsdata.wind.speed,
-    pressure: wsdata.main.pressure,
-    sunrise: wsdata.sys.sunrise,
-    sunset: wsdata.sys.sunset,
+    tempC: `${Math.round(kelvinToCelsius(wsdata.main.temp))} °C`,
+    tempF: `${Math.round(kelvinToFahrenheit(wsdata.main.temp))} °F`,
+    feels_likeC: `${Math.round(kelvinToCelsius(wsdata.main.feels_like))} °C`,
+    feels_likeF: `${Math.round(kelvinToFahrenheit(wsdata.main.feels_like))} °F`,
+    humidity: `${wsdata.main.humidity} %`,
+    wind: `${Math.round(wsdata.wind.speed)} m/s`,
+    pressure: `${wsdata.main.pressure} hPa`,
+    sunrise: `${time.time(wsdata.sys.sunrise)}`,
+    sunset: `${time.time(wsdata.sys.sunset)}`,
+    icon: wsdata.weather[0].icon,
   };
 
   screen.innerText = `yes`;
