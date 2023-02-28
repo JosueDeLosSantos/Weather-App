@@ -1,6 +1,8 @@
 import "./styles.css";
 
 const body = document.querySelector("body");
+// Form
+const form = document.createElement("form");
 // Search box
 const searchBox = document.createElement("input");
 searchBox.setAttribute("type", "search");
@@ -9,13 +11,13 @@ searchBox.value = "samana";
 // Button
 const sbButton = document.createElement("button");
 sbButton.innerText = "Search";
-sbButton.setAttribute("name", "Search");
 // Screen
 const screen = document.createElement("div");
 screen.classList.add("screen");
 
-body.appendChild(searchBox);
-body.appendChild(sbButton);
+body.appendChild(form);
+form.appendChild(searchBox);
+form.appendChild(sbButton);
 body.appendChild(screen);
 
 function kelvinToCelsius(value) {
@@ -27,21 +29,31 @@ function kelvinToFahrenheit(value) {
 }
 
 // Celsius
-const weatherCheckC = async () => {
+const weatherCheck = async (e) => {
+  e.preventDefault();
   const wsearch = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
   );
   const wsdata = await wsearch.json();
 
-  const wmain = wsdata.main;
-  const wWeather = wsdata.weather;
-  const wWind = wsdata.wind;
+  const cardInfo = {
+    city: wsdata.name,
+    country: wsdata.sys.country,
+    time: wsdata.dt,
+    description: wsdata.weather[0].description,
+    temp: wsdata.main.temp,
+    feels_like: wsdata.main.feels_like,
+    temp_min: wsdata.main.temp_min,
+    temp_max: wsdata.main.temp_max,
+    humidity: wsdata.main.humidity,
+    wind: wsdata.wind.speed,
+    pressure: wsdata.main.pressure,
+    sunrise: wsdata.sys.sunrise,
+    sunset: wsdata.sys.sunset,
+  };
 
-  const mObject = [wmain, wWeather, wWind];
-
-  screen.innerText = `${Math.round(kelvinToCelsius(mObject[0].temp))}`;
-  console.log(mObject[0].temp);
-  console.log(mObject);
+  screen.innerText = `yes`;
+  console.log(cardInfo);
 };
 
-sbButton.addEventListener("click", weatherCheckC);
+sbButton.addEventListener("click", weatherCheck);
