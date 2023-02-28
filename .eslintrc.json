@@ -10,5 +10,6 @@
         "sourceType": "module"
     },
     "rules": {
+        "eslint prefer-arrow-callback": "false"
     }
 }

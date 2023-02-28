@@ -29,6 +29,144 @@ function kelvinToFahrenheit(value) {
   return kelvinToCelsius(value) * 1.8 + 32;
 }
 
+/* tests */
+
+/* const sampleObject = {
+  city: "Samaná",
+  country: "DO",
+  time: "1:56 PM",
+  date: "Feb 28",
+  description: "few clouds",
+  tempC: "29 °C",
+  tempF: "84 °F",
+  feels_likeC: "34 °C",
+  feels_likeF: "93 °F",
+  humidity: "74 %",
+  wind: "4 m/s",
+  pressure: "1018 hPa",
+  sunrise: "6:57 AM",
+  sunset: "6:42 PM",
+  icon: "02d",
+}; */
+
+const cityName = document.createElement("div");
+cityName.classList.add("cityName");
+screen.appendChild(cityName);
+
+const daytime = document.createElement("div");
+daytime.classList.add("daytime");
+screen.appendChild(daytime);
+
+const description = document.createElement("div");
+description.classList.add("description");
+screen.appendChild(description);
+
+const allInfo = document.createElement("div");
+allInfo.classList.add("allInfo");
+screen.appendChild(allInfo);
+
+const rightInfo = document.createElement("div");
+rightInfo.classList.add("rightInfo");
+const centerInfo = document.createElement("div");
+centerInfo.classList.add("centerInfo");
+const leftInfo = document.createElement("div");
+leftInfo.classList.add("leftInfo");
+allInfo.appendChild(leftInfo);
+allInfo.appendChild(centerInfo);
+allInfo.appendChild(rightInfo);
+
+const temp = document.createElement("div");
+temp.classList.add("temp");
+leftInfo.appendChild(temp);
+
+const feelsLike = document.createElement("div");
+feelsLike.classList.add("feelsLike");
+leftInfo.appendChild(feelsLike);
+
+const humidity = document.createElement("div");
+humidity.classList.add("humidity");
+rightInfo.appendChild(humidity);
+
+const icon = new Image();
+icon.classList.add("icon");
+centerInfo.appendChild(icon);
+
+const wind = document.createElement("div");
+wind.classList.add("wind");
+rightInfo.appendChild(wind);
+
+const sunrise = document.createElement("div");
+sunrise.classList.add("sunrise");
+leftInfo.appendChild(sunrise);
+
+const sunset = document.createElement("div");
+sunset.classList.add("sunset");
+rightInfo.appendChild(sunset);
+
+const options = document.createElement("div");
+options.classList.add("options");
+screen.appendChild(options);
+
+const celsius = document.createElement("div");
+celsius.classList.add("celsius");
+celsius.innerHTML = "<p>°C&nbsp</p>";
+celsius.hidden = true;
+options.appendChild(celsius);
+
+const slash = document.createElement("div");
+slash.classList.add("slash");
+slash.innerHTML = "<p>/</p>";
+slash.hidden = true;
+options.appendChild(slash);
+
+const fahrenheit = document.createElement("div");
+fahrenheit.classList.add("fahrenheit");
+fahrenheit.innerHTML = "<p>&nbsp°F</p>";
+fahrenheit.hidden = true;
+options.appendChild(fahrenheit);
+
+function dispenser(object, option = "C") {
+  const space = ", ";
+  cityName.innerText = `${object.city}, ${object.country}`;
+  daytime.innerText = `${object.date}${space}${object.time}`;
+  description.innerText = `${object.description}`;
+
+  if (option === "C") {
+    temp.innerText = `${object.tempC}`;
+    feelsLike.innerText = `Feels like ${object.feels_likeC}`;
+  } else if (option === "F") {
+    temp.innerText = `${object.tempF}`;
+    feelsLike.innerText = `Feels like ${object.feels_likeF}`;
+  }
+
+  humidity.innerText = `Humidity: ${object.humidity}`;
+
+  async function weatherIcon(value) {
+    const iconFetch = await fetch(
+      `http://openweathermap.org/img/wn/${value}@2x.png`,
+      {
+        mode: "cors",
+      }
+    );
+
+    icon.src = iconFetch.url;
+
+    console.log(iconFetch);
+  }
+
+  weatherIcon(object.icon);
+
+  wind.innerText = `Wind: ${object.wind}`;
+  sunrise.innerText = `sunrise: ${object.sunrise}`;
+  sunset.innerText = `sunset: ${object.sunset}`;
+
+  celsius.hidden = false;
+  slash.hidden = false;
+  fahrenheit.hidden = false;
+}
+
+/* dispenser(sampleObject); */
+
 const weatherCheck = async (e) => {
   e.preventDefault();
   const wsearch = await fetch(
@@ -54,8 +192,8 @@ const weatherCheck = async (e) => {
     icon: wsdata.weather[0].icon,
   };
 
-  screen.innerText = `yes`;
   console.log(cardInfo);
+  dispenser(cardInfo, "F");
 };
 
 sbButton.addEventListener("click", weatherCheck);

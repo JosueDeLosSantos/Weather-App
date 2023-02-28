@@ -37,10 +37,9 @@ export function currentDate(value) {
   // use the toLocaleString() method to get the month name from a date in JavaScript.
   const month = date.toLocaleString("default", { month: "short" });
   const day = date.getDate();
-  const year = date.getFullYear();
   const space = " ";
 
-  return `${month}${space}${day}${space}${year}`;
+  return `${month}${space}${day}`;
 }
 
 console.log(currentDate(1677599614));
