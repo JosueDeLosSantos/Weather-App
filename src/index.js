@@ -8,7 +8,6 @@ const form = document.createElement("form");
 const searchBox = document.createElement("input");
 searchBox.setAttribute("type", "search");
 searchBox.setAttribute("placeholder", "Enter city name");
-searchBox.value = "samana";
 // Button
 const sbButton = document.createElement("button");
 sbButton.innerText = "Search";
@@ -109,6 +108,7 @@ screen.appendChild(options);
 
 const celsius = document.createElement("div");
 celsius.classList.add("celsius");
+celsius.classList.add("bold");
 celsius.innerHTML = "<p>°C&nbsp</p>";
 celsius.hidden = true;
 options.appendChild(celsius);
@@ -165,7 +165,7 @@ function dispenser(object, option = "C") {
   fahrenheit.hidden = false;
 }
 
-/* dispenser(sampleObject); */
+let cardInfoHolder = null;
 
 const weatherCheck = async (e) => {
   e.preventDefault();
@@ -173,6 +173,8 @@ const weatherCheck = async (e) => {
     `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
   );
   const wsdata = await wsearch.json();
+
+  console.log(wsdata);
 
   const cardInfo = {
     city: wsdata.name,
@@ -192,8 +194,25 @@ const weatherCheck = async (e) => {
     icon: wsdata.weather[0].icon,
   };
 
+  cardInfoHolder = cardInfo;
+
   console.log(cardInfo);
-  dispenser(cardInfo, "F");
+  dispenser(cardInfo);
 };
 
 sbButton.addEventListener("click", weatherCheck);
+
+const tempSwitch = () => {
+  if (celsius.classList.contains("bold")) {
+    celsius.classList.remove("bold");
+    fahrenheit.classList.add("bold");
+    dispenser(cardInfoHolder, "F");
+  } else {
+    fahrenheit.classList.remove("bold");
+    celsius.classList.add("bold");
+    dispenser(cardInfoHolder);
+  }
+};
+
+celsius.onclick = tempSwitch;
+fahrenheit.onclick = tempSwitch;

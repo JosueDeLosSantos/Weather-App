@@ -13,13 +13,15 @@ export function time(value) {
   let formattedTime = null;
 
   // AM / PM
-  if (hours <= 12) {
+  if (hours < 12) {
     if (hours === 12) {
       formattedTime = `${hours}:${minutes} PM`;
     } else if (hours < 12) {
       formattedTime = `${hours}:${minutes} AM`;
     }
-  } else if (hours >= 13) {
+  }
+
+  if (hours >= 13) {
     if (hours === 24) {
       formattedTime = `${hours - 12}:${minutes} AM`;
     } else if (hours < 24) {
@@ -41,9 +43,3 @@ export function currentDate(value) {
 
   return `${month}${space}${day}`;
 }
-
-console.log(currentDate(1677599614));
-
-// sunrise 1677581867
-// sunset 1677624145
-// time 1677599614
