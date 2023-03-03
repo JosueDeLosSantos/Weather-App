@@ -7,9 +7,7 @@ export function time(value) {
   const hours = date.getHours();
   // Minutes part from the timestamp
   const minutes = `${date.getMinutes()}`;
-
   // Will display time in 10:30:23 format
-  /* const formattedTime = `${hours}:${minutes}:${seconds}`; */
   let formattedTime = null;
 
   // AM / PM

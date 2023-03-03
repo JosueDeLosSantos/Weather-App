@@ -165,7 +165,7 @@ function dispenser(object, option = "C") {
 
   async function weatherIcon(value) {
     const iconFetch = await fetch(
-      `http://openweathermap.org/img/wn/${value}@2x.png`,
+      `https://openweathermap.org/img/wn/${value}@2x.png`,
       {
         mode: "cors",
       }
@@ -195,7 +195,8 @@ async function weatherCheck(e) {
 
   try {
     const wsearch = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
+      `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`,
+      { mode: "cors" }
     );
     const wsdata = await wsearch.json();
 
@@ -313,3 +314,5 @@ function showSearch() {
   slash.hidden = true;
   fahrenheit.hidden = true;
 }
+
+/* end */
