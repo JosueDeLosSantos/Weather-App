@@ -1,7 +1,26 @@
 import "./styles.css";
 import * as time from "./time";
+import sunIcon from "./icons/sunny.svg";
+import warningIcon from "./icons/warning.svg";
+import searchIcon from "./icons/search.svg";
+import githubIcon from "./icons/github.svg";
 
 const body = document.querySelector("body");
+// Title
+const title = document.createElement("div");
+title.dataset.class = "title";
+title.innerText = "Weather app";
+// Title container
+const titleC = document.createElement("div");
+titleC.dataset.class = "titleC";
+// Icon
+const sunnyIcon = new Image();
+sunnyIcon.src = sunIcon;
+sunnyIcon.dataset.class = "sunnyIcon";
+
+body.appendChild(titleC);
+titleC.appendChild(title);
+titleC.appendChild(sunnyIcon);
 // Form
 const form = document.createElement("form");
 // Search box
@@ -10,6 +29,7 @@ searchBox.setAttribute("type", "search");
 searchBox.setAttribute("placeholder", "Enter city name");
 // Button
 const sbButton = document.createElement("button");
+sbButton.dataset.sbBvalue = "before";
 sbButton.innerText = "Search";
 // Screen
 const screen = document.createElement("div");
@@ -27,26 +47,6 @@ function kelvinToCelsius(value) {
 function kelvinToFahrenheit(value) {
   return kelvinToCelsius(value) * 1.8 + 32;
 }
-
-/* tests */
-
-/* const sampleObject = {
-  city: "Samaná",
-  country: "DO",
-  time: "1:56 PM",
-  date: "Feb 28",
-  description: "few clouds",
-  tempC: "29 °C",
-  tempF: "84 °F",
-  feels_likeC: "34 °C",
-  feels_likeF: "93 °F",
-  humidity: "74 %",
-  wind: "4 m/s",
-  pressure: "1018 hPa",
-  sunrise: "6:57 AM",
-  sunset: "6:42 PM",
-  icon: "02d",
-}; */
 
 const cityName = document.createElement("div");
 cityName.classList.add("cityName");
@@ -108,7 +108,6 @@ screen.appendChild(options);
 
 const celsius = document.createElement("div");
 celsius.classList.add("celsius");
-celsius.classList.add("bold");
 celsius.innerHTML = "<p>°C&nbsp</p>";
 celsius.hidden = true;
 options.appendChild(celsius);
@@ -125,10 +124,33 @@ fahrenheit.innerHTML = "<p>&nbsp°F</p>";
 fahrenheit.hidden = true;
 options.appendChild(fahrenheit);
 
+const footer = document.createElement("footer");
+const fname = document.createElement("div");
+fname.innerText = "® 2023 JOSUE DE LOS SANTOS";
+const fgithub = document.createElement("div");
+const githubImage = new Image();
+githubImage.setAttribute("title", "go to code");
+githubImage.src = githubIcon;
+const githubImageLink = document.createElement("a");
+githubImageLink.setAttribute(
+  "href",
+  "https://github.com/JosueDeLosSantos/Weather-App"
+);
+githubImageLink.appendChild(githubImage);
+fgithub.appendChild(githubImageLink);
+footer.appendChild(fname);
+footer.appendChild(fgithub);
+body.appendChild(footer);
+
+sbButton.addEventListener("click", weatherCheck);
+
 function dispenser(object, option = "C") {
-  const space = ", ";
+  if (!screen.classList.contains("day")) {
+    screen.classList.add("day");
+  }
+
   cityName.innerText = `${object.city}, ${object.country}`;
-  daytime.innerText = `${object.date}${space}${object.time}`;
+  daytime.innerText = `${object.date}`;
   description.innerText = `${object.description}`;
 
   if (option === "C") {
@@ -150,8 +172,6 @@ function dispenser(object, option = "C") {
     );
 
     icon.src = iconFetch.url;
-
-    console.log(iconFetch);
   }
 
   weatherIcon(object.icon);
@@ -167,52 +187,129 @@ function dispenser(object, option = "C") {
 
 let cardInfoHolder = null;
 
-const weatherCheck = async (e) => {
+async function weatherCheck(e) {
   e.preventDefault();
-  const wsearch = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
-  );
-  const wsdata = await wsearch.json();
+  showSearch();
 
-  console.log(wsdata);
+  let errorMessage = null;
 
-  const cardInfo = {
-    city: wsdata.name,
-    country: wsdata.sys.country,
-    time: `${time.time(wsdata.dt)}`,
-    date: `${time.currentDate(wsdata.dt)}`,
-    description: wsdata.weather[0].description,
-    tempC: `${Math.round(kelvinToCelsius(wsdata.main.temp))} °C`,
-    tempF: `${Math.round(kelvinToFahrenheit(wsdata.main.temp))} °F`,
-    feels_likeC: `${Math.round(kelvinToCelsius(wsdata.main.feels_like))} °C`,
-    feels_likeF: `${Math.round(kelvinToFahrenheit(wsdata.main.feels_like))} °F`,
-    humidity: `${wsdata.main.humidity} %`,
-    wind: `${Math.round(wsdata.wind.speed)} m/s`,
-    pressure: `${wsdata.main.pressure} hPa`,
-    sunrise: `${time.time(wsdata.sys.sunrise)}`,
-    sunset: `${time.time(wsdata.sys.sunset)}`,
-    icon: wsdata.weather[0].icon,
-  };
+  try {
+    const wsearch = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${searchBox.value}&APPID=ce5151a53f837ffd535ab5be241f560c`
+    );
+    const wsdata = await wsearch.json();
 
-  cardInfoHolder = cardInfo;
+    if (wsdata.message) {
+      errorMessage = await wsdata.message;
+    }
 
-  console.log(cardInfo);
-  dispenser(cardInfo);
-};
+    const cardInfo = {
+      city: wsdata.name,
+      country: wsdata.sys.country,
+      time: `${time.time(wsdata.dt)}`,
+      date: `${time.currentDate(wsdata.dt)}`,
+      description: wsdata.weather[0].description,
+      tempC: `${Math.round(kelvinToCelsius(wsdata.main.temp))} °C`,
+      tempF: `${Math.round(kelvinToFahrenheit(wsdata.main.temp))} °F`,
+      feels_likeC: `${Math.round(kelvinToCelsius(wsdata.main.feels_like))} °C`,
+      feels_likeF: `${Math.round(
+        kelvinToFahrenheit(wsdata.main.feels_like)
+      )} °F`,
+      humidity: `${wsdata.main.humidity} %`,
+      wind: `${Math.round(wsdata.wind.speed)} m/s`,
+      pressure: `${wsdata.main.pressure} hPa`,
+      sunrise: `${time.time(wsdata.sys.sunrise)}`,
+      sunset: `${time.time(wsdata.sys.sunset)}`,
+      icon: wsdata.weather[0].icon,
+    };
 
-sbButton.addEventListener("click", weatherCheck);
+    cardInfoHolder = cardInfo;
 
-const tempSwitch = () => {
+    if (fahrenheit.classList.contains("bold")) {
+      fahrenheit.classList.remove("bold");
+    }
+
+    celsius.classList.add("bold");
+
+    dispenser(cardInfo);
+  } catch (error) {
+    showSearch();
+    showError(errorMessage);
+  }
+}
+
+function tempSwitchC() {
+  if (fahrenheit.classList.contains("bold")) {
+    fahrenheit.classList.remove("bold");
+    celsius.classList.add("bold");
+    dispenser(cardInfoHolder, "C");
+    return;
+  }
+}
+
+function tempSwitchF() {
   if (celsius.classList.contains("bold")) {
     celsius.classList.remove("bold");
     fahrenheit.classList.add("bold");
     dispenser(cardInfoHolder, "F");
-  } else {
-    fahrenheit.classList.remove("bold");
-    celsius.classList.add("bold");
-    dispenser(cardInfoHolder);
+    return;
   }
-};
+}
+celsius.onclick = tempSwitchC;
+fahrenheit.onclick = tempSwitchF;
 
-celsius.onclick = tempSwitch;
-fahrenheit.onclick = tempSwitch;
+function showError(value) {
+  if (screen.classList.contains("day")) {
+    screen.classList.remove("day");
+  }
+
+  cityName.innerText = "";
+  daytime.innerText = "";
+  description.innerText = `${value}`;
+
+  temp.innerText = "";
+  feelsLike.innerText = "";
+
+  temp.innerText = "";
+  feelsLike.innerText = "";
+
+  humidity.innerText = "";
+
+  icon.src = warningIcon;
+
+  wind.innerText = "";
+  sunrise.innerText = "";
+  sunset.innerText = "";
+
+  celsius.hidden = true;
+  slash.hidden = true;
+  fahrenheit.hidden = true;
+}
+
+function showSearch() {
+  if (screen.classList.contains("day")) {
+    screen.classList.remove("day");
+  }
+
+  cityName.innerText = "";
+  daytime.innerText = "";
+  description.innerText = "";
+
+  temp.innerText = "";
+  feelsLike.innerText = "";
+
+  temp.innerText = "";
+  feelsLike.innerText = "";
+
+  humidity.innerText = "";
+
+  icon.src = searchIcon;
+
+  wind.innerText = "";
+  sunrise.innerText = "";
+  sunset.innerText = "";
+
+  celsius.hidden = true;
+  slash.hidden = true;
+  fahrenheit.hidden = true;
+}
